@@ -18,6 +18,7 @@ func main() {
 
 	// Routes
 	e.GET("/CreateModels", handlers.CreateModels)
+	e.GET("/DropModels", handlers.DropModels)
 
 	// Start server
 	e.Logger.Fatal(e.Start(":1323"))

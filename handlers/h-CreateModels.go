@@ -11,12 +11,12 @@ import (
 	"github.com/Tavasiev/cws-backend/models"
 )
 
-//CreateModels Создает модели в бд
+//CreateModels Создает все модели в бд.
 func CreateModels(c echo.Context) error {
 	//Ссылка на документацию https://godoc.org/github.com/go-pg/pg#Connect
 	db := pg.Connect(&pg.Options{
 		User:     "user",
-		Password: "passwrod",
+		Password: "password",
 		Database: "database",
 	})
 	defer db.Close()
@@ -32,5 +32,5 @@ func CreateModels(c echo.Context) error {
 		}
 	}
 
-	return c.String(http.StatusOK, "Созданно.")
+	return c.String(http.StatusOK, "Created")
 }
