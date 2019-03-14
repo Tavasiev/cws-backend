@@ -1,9 +1,6 @@
 package main
 
 import (
-	//"database/sql"
-
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 
@@ -20,7 +17,7 @@ func main() {
 	e.Use(middleware.Recover())
 
 	// Routes
-	e.GET("/hello", handlers.Hello)
+	e.GET("/CreateModels", handlers.CreateModels)
 
 	// Start server
 	e.Logger.Fatal(e.Start(":1323"))
