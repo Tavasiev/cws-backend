@@ -1,11 +1,9 @@
 package main
 
 import (
+	"github.com/Tavasiev/cws-backend/handlers"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
-
-	//local
-	"github.com/Tavasiev/cws-backend/handlers"
 )
 
 func main() {
