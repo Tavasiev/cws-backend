@@ -3,12 +3,10 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/Tavasiev/cws-backend/models"
 	"github.com/go-pg/pg"
 	"github.com/go-pg/pg/orm"
 	"github.com/labstack/echo"
-
-	//local
-	"github.com/Tavasiev/cws-backend/models"
 )
 
 //CreateModels Создает все модели в бд.
