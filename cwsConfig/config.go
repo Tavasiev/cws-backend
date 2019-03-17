@@ -1,24 +1,18 @@
-package main
+package configs
 
 import (
     "github.com/BurntSushi/toml"
     "log"
 )
 
-type Server struct{
-	Port string
-}
-
-type Configuration struct {
-	Server Server
-}
-
 //GetConfig возвращает заданное поле конфигурации
-func GetConfig()interface{} {
-    var config Configuration
+func GetConfig(Name string)map[string]interface{} {
+    var config map[string]interface{}
     _, err := toml.DecodeFile("config.toml", &config); 
     if err != nil {
         log.Printf("Error decode config %s",err)
     }
-    return config.Server.Port
+    data, isOk := config[Name].(map[string]interface {})
+    if isOk == false {log.Print("Error check .toml file")}
+    return data
 }

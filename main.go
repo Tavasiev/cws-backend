@@ -18,7 +18,7 @@ func main() {
 	// Routes
 	e.GET("/CreateModels", handlers.CreateModels)
 	e.GET("/DropModels", handlers.DropModels)
-
+	config := cwsconfig.GetConfig("Server")
 	// Start server
-	e.Logger.Fatal(e.Start(cwsconfig.GetConfig()))
+	e.Logger.Fatal(e.Start(config["Port"]))
 }
