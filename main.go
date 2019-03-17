@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/Tavasiev/cws-backend/handlers"
+	"github.com/Tavasiev/cws-backend/cwsconfig"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 )
@@ -19,5 +20,5 @@ func main() {
 	e.GET("/DropModels", handlers.DropModels)
 
 	// Start server
-	e.Logger.Fatal(e.Start(":1323"))
+	e.Logger.Fatal(e.Start(cwsconfig.GetConfig()))
 }
