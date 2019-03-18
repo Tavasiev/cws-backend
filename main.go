@@ -1,12 +1,16 @@
 package main
 
 import (
-	"github.com/Tavasiev/cws-backend/handlers"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
+
+	//local
+	"github.com/Tavasiev/cws-backend/configs"
+	"github.com/Tavasiev/cws-backend/handlers"
 )
 
 func main() {
+	conf := configs.MakeConfig() // получение конфиг структуры
 
 	e := echo.New()
 
@@ -20,5 +24,5 @@ func main() {
 	e.POST("/AddCity", handlers.AddCity)
 
 	// Start server
-	e.Logger.Fatal(e.Start(":1323"))
+	e.Logger.Fatal(e.Start(conf.MainPort))
 }

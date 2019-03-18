@@ -3,9 +3,12 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/Tavasiev/cws-backend/models"
 	"github.com/go-pg/pg"
 	"github.com/labstack/echo"
+
+	//local
+	"github.com/Tavasiev/cws-backend/configs"
+	"github.com/Tavasiev/cws-backend/models"
 )
 
 // AddCity Добавляет город в таблицу Cities
@@ -14,6 +17,8 @@ import (
 // 	"city": "YourCity"
 // }
 func AddCity(c echo.Context) error {
+	conf := configs.MakeConfig() // получение конфиг структуры
+
 	var inputJSON models.Cities
 	err := c.Bind(&inputJSON)
 	if err != nil {
@@ -21,9 +26,10 @@ func AddCity(c echo.Context) error {
 	}
 
 	db := pg.Connect(&pg.Options{
-		User:     "user",
-		Password: "password",
-		Database: "database",
+		Addr:     conf.DB.Addr,
+		User:     conf.DB.User,
+		Password: conf.DB.Password,
+		Database: conf.DB.Database,
 	})
 	defer db.Close()
 

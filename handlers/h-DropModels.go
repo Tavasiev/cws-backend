@@ -3,18 +3,24 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/Tavasiev/cws-backend/models"
 	"github.com/go-pg/pg"
 	"github.com/go-pg/pg/orm"
 	"github.com/labstack/echo"
+
+	//local
+	"github.com/Tavasiev/cws-backend/configs"
+	"github.com/Tavasiev/cws-backend/models"
 )
 
 //DropModels Удаляет все модели из бд.
 func DropModels(c echo.Context) error {
+	conf := configs.MakeConfig() // получение конфиг структуры
+
 	db := pg.Connect(&pg.Options{
-		User:     "user",
-		Password: "password",
-		Database: "database",
+		Addr:     conf.DB.Addr,
+		User:     conf.DB.User,
+		Password: conf.DB.Password,
+		Database: conf.DB.Database,
 	})
 	defer db.Close()
 

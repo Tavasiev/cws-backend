@@ -1,7 +1,6 @@
 package models
 
 //Cities Таблица городов, в которых запущено приложение
-//
 type Cities struct {
-	City string `sql:",pk" json:"city"`
+	City string `sql:",pk"`
 }
