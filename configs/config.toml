@@ -1,0 +1,9 @@
+# config.toml
+
+MainPort = ":1323"
+
+[database]
+Addr = "localhost:5432"
+User = "testu1"
+Password = "testpass1"
+Database = "vscale_db"
