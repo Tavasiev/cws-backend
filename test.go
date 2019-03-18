@@ -1,10 +1,11 @@
 package main
 
 import (
-    "./cwsConfig"
+    "./configs"
     "log"
 )
 
 func main() {
-	log.Print(configs.GetConfig("Server"))
+	config.InitConfigs("configs/config")
+	log.Print(config.Cfg.Server.MainPort)
 }
