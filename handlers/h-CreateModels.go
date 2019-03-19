@@ -14,13 +14,13 @@ import (
 
 //CreateModels Создает все модели в бд.
 func CreateModels(c echo.Context) error {
-	conf := configs.MakeConfig() // получение конфиг структуры
+	configs.InitConfigs("configs/config") // получение конфиг структуры
 
 	db := pg.Connect(&pg.Options{
-		Addr:     conf.DB.Addr,
-		User:     conf.DB.User,
-		Password: conf.DB.Password,
-		Database: conf.DB.Database,
+		Addr:     configs.Cfg.DataBase.Addr,
+		User:     configs.Cfg.DataBase.User,
+		Password: configs.Cfg.DataBase.Password,
+		Database: configs.Cfg.DataBase.DB,
 	})
 	defer db.Close()
 
@@ -30,7 +30,8 @@ func CreateModels(c echo.Context) error {
 		})
 
 		if err != nil {
-			panic(err)
+			return echo.NewHTTPError(http.StatusOK, err.Error())
+			//panic(err)
 		}
 	}
 
