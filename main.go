@@ -11,6 +11,7 @@ import (
 
 func main() {
 	conf := configs.MakeConfig() // получение конфиг структуры
+  config := cwsconfig.GetConfig("Server")
 
 	e := echo.New()
 
@@ -21,8 +22,10 @@ func main() {
 	// Routes
 	e.GET("/CreateModels", handlers.CreateModels)
 	e.GET("/DropModels", handlers.DropModels)
-	e.POST("/AddCity", handlers.AddCity)
+  e.POST("/AddCity", handlers.AddCity)
 
+	
 	// Start server
-	e.Logger.Fatal(e.Start(conf.MainPort))
+	e.Logger.Fatal(e.Start(config["Port"]))
+	
 }
