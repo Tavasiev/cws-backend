@@ -1,13 +1,17 @@
 package main
 
 import (
-	"github.com/Tavasiev/cws-backend/handlers"
-	"github.com/Tavasiev/cws-backend/cwsconfig"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
+
+	//local
+	"github.com/Tavasiev/cws-backend/configs"
+	"github.com/Tavasiev/cws-backend/handlers"
 )
 
 func main() {
+	conf := configs.MakeConfig() // получение конфиг структуры
+  config := cwsconfig.GetConfig("Server")
 
 	e := echo.New()
 
@@ -18,7 +22,10 @@ func main() {
 	// Routes
 	e.GET("/CreateModels", handlers.CreateModels)
 	e.GET("/DropModels", handlers.DropModels)
-	config := cwsconfig.GetConfig("Server")
+  e.POST("/AddCity", handlers.AddCity)
+
+	
 	// Start server
 	e.Logger.Fatal(e.Start(config["Port"]))
+	
 }
