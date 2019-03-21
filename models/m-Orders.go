@@ -5,7 +5,7 @@ import "time"
 //Orders Таблица Заказов
 type Orders struct {
 	ID     int       `sql:",pk"`
-	Date   time.Time `sql:",notnull"`
+	Date   time.Time `sql:"default:now()"`
 	Rating string
 	Status string `sql:",notnull"`
 

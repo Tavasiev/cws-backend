@@ -51,5 +51,5 @@ func AddWorker(c echo.Context) error {
 		//panic(err)
 	}
 
-	return echo.NewHTTPError(http.StatusOK, "Added")
+	return echo.NewHTTPError(http.StatusOK, "Worker Added")
 }

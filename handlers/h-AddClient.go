@@ -11,15 +11,17 @@ import (
 	"github.com/Tavasiev/cws-backend/models"
 )
 
-// AddCity Добавляет город в таблицу Cities
+// AddClient Добавляет инф о работкнике в таблицу Workers
 // формат входного json'а:
-// {
-// 	"city": "YourCity"
-// }
-func AddCity(c echo.Context) error {
+//{
+//	"phone": 89888794747,
+//	"initials": "Ivanon I. I.",
+//	"city": "Vladikavkaz"
+//}
+func AddClient(c echo.Context) error {
 	configs.InitConfigs("configs/config") // получение конфиг структуры
 
-	var inputJSON models.Cities
+	var inputJSON models.Clients
 	err := c.Bind(&inputJSON)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Wrong data")
@@ -33,8 +35,11 @@ func AddCity(c echo.Context) error {
 	})
 	defer db.Close()
 
-	err = db.Insert(&models.Cities{
-		City: inputJSON.City,
+	err = db.Insert(&models.Clients{
+
+		Phone:      inputJSON.Phone,
+		Initials:   inputJSON.Initials,
+		CitiesCity: inputJSON.CitiesCity,
 	})
 
 	if err != nil {
@@ -42,5 +47,5 @@ func AddCity(c echo.Context) error {
 		//panic(err)
 	}
 
-	return echo.NewHTTPError(http.StatusOK, "City Added")
+	return echo.NewHTTPError(http.StatusOK, "Client Added")
 }
