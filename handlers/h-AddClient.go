@@ -11,7 +11,7 @@ import (
 	"github.com/Tavasiev/cws-backend/models"
 )
 
-// AddClient Добавляет инф о работкнике в таблицу Workers
+// AddClient Добавляет инф о клиенте в таблицу Clients
 // формат входного json'а:
 //{
 //	"phone": 89888794747,
