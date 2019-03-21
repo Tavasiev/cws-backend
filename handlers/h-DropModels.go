@@ -33,5 +33,5 @@ func DropModels(c echo.Context) error {
 		}
 	}
 
-	return c.String(http.StatusOK, "Deleted/Dropped")
+	return c.String(http.StatusOK, "Models Deleted/Dropped")
 }

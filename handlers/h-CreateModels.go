@@ -35,5 +35,5 @@ func CreateModels(c echo.Context) error {
 		}
 	}
 
-	return c.String(http.StatusOK, "Created")
+	return c.String(http.StatusOK, "Models Created")
 }
