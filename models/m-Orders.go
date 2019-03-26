@@ -9,9 +9,9 @@ type Orders struct {
 	Rating string
 	Status string `sql:",notnull"`
 
-	WorkersID int `sql:"on_delete:RESTRICT, on_update: CASCADE, notnull"`
+	WorkersID int `sql:"on_delete:RESTRICT, on_update: CASCADE"`
 	Workers   *Workers
 
-	ClientsID int `sql:"on_delete:RESTRICT, on_update: CASCADE, notnull"`
+	ClientsID int `sql:"on_delete:RESTRICT, on_update: CASCADE"`
 	Clients   *Clients
 }
