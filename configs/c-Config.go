@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/viper"
 )
 
+//MainConfigs main config struct
 type MainConfigs struct {
 	Server struct {
 		MainPort string
@@ -19,6 +20,7 @@ type MainConfigs struct {
 	}
 }
 
+//Cfg config
 var Cfg MainConfigs
 
 //InitConfigs Initializes the main programm settings
