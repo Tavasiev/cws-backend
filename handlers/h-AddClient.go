@@ -15,6 +15,7 @@ import (
 // формат входного json'а:
 //{
 //	"phone": 89888794747,
+//	"pass" : qwerty1
 //	"initials": "Ivanon I. I.",
 //	"city": "Vladikavkaz"
 //}

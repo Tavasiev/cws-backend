@@ -4,6 +4,7 @@ package models
 type Clients struct {
 	ID       int    `sql:", pk"`
 	Phone    int    `sql:", unique, notnull" json:"phone"`
+	Password string `sql:",notnull" json:"pass"`
 	Initials string `sql:",notnull" json:"initials"`
 	Status   bool   `sql:",notnull, default:false"`
 
