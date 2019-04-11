@@ -38,8 +38,8 @@ func AddCity(c echo.Context) error {
 	})
 
 	if err != nil {
-		return echo.NewHTTPError(http.StatusOK, err.Error())
-		//panic(err)
+		//return echo.NewHTTPError(http.StatusOK, err.Error())
+		panic(err)
 	}
 
 	return echo.NewHTTPError(http.StatusOK, "City Added")
