@@ -15,6 +15,7 @@ import (
 // формат входного json'а:
 //{
 //	"phone": 89888794747,
+//	"pass" : qwerty1 or md5
 //	"initials": "Ivanon I. I.",
 //	"city": "Vladikavkaz"
 //}
@@ -40,6 +41,7 @@ func AddClient(c echo.Context) error {
 		Phone:      inputJSON.Phone,
 		Initials:   inputJSON.Initials,
 		CitiesCity: inputJSON.CitiesCity,
+		Password:   inputJSON.Password,
 	})
 
 	if err != nil {
