@@ -3,11 +3,11 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/go-pg/pg"
 	"github.com/labstack/echo"
 
 	//local
 	"github.com/Tavasiev/cws-backend/configs"
+	"github.com/Tavasiev/cws-backend/dbconn"
 	"github.com/Tavasiev/cws-backend/models"
 )
 
@@ -31,13 +31,7 @@ func AddWorker(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Wrong data")
 	}
 
-	db := pg.Connect(&pg.Options{
-		Addr:     configs.Cfg.DataBase.Addr,
-		User:     configs.Cfg.DataBase.User,
-		Password: configs.Cfg.DataBase.Password,
-		Database: configs.Cfg.DataBase.DB,
-	})
-	defer db.Close()
+	db := dbconn.GetConnect()
 
 	err = db.Insert(&models.Workers{
 

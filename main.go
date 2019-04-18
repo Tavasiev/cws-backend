@@ -6,11 +6,20 @@ import (
 
 	//local
 	"github.com/Tavasiev/cws-backend/configs"
+	"github.com/Tavasiev/cws-backend/dbconn"
 	"github.com/Tavasiev/cws-backend/handlers"
 )
 
 func main() {
-	configs.InitConfigs("configs/config") // получение конфиг структуры
+
+	// получение конфиг структуры
+	configs.InitConfigs("configs/config")
+
+	// подключение к бд
+	err := dbconn.Connect()
+	if err != nil {
+		panic(err)
+	}
 
 	e := echo.New()
 
