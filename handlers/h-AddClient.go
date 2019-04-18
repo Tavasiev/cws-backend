@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/labstack/echo"
@@ -43,5 +44,16 @@ func AddClient(c echo.Context) error {
 		//panic(err)
 	}
 
-	return echo.NewHTTPError(http.StatusOK, "Client Added")
+	//return echo.NewHTTPError(http.StatusOK, "Client Added")
+
+	token, err := models.CreateJwtToken()
+	if err != nil {
+		log.Println("Error creating Jwt token", err)
+		return c.String(http.StatusInternalServerError, "something went wrong")
+	}
+
+	return c.JSON(http.StatusOK, map[string]string{
+		"message": "You registered sucsesfully",
+		"token":   token,
+	})
 }
