@@ -45,8 +45,6 @@ func main() {
 	e.GET("/CreateModels", h.CreateModels)
 	e.GET("/DropModels", h.DropModels)
 	e.POST("/AddCity", h.AddCity)
-	//e.POST("/AddWorker", handlers.AddWorker)
-	//e.POST("/AddClient", handlers.AddClient)
 
 	o.GET("/main", h.TestJwt)
 

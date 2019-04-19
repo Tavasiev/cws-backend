@@ -41,10 +41,7 @@ func AddClient(c echo.Context) error {
 
 	if err != nil {
 		return echo.NewHTTPError(http.StatusOK, err.Error())
-		//panic(err)
 	}
-
-	//return echo.NewHTTPError(http.StatusOK, "Client Added")
 
 	token, err := models.CreateJwtToken()
 	if err != nil {
