@@ -17,7 +17,11 @@ func DropModels(c echo.Context) error {
 	configs.InitConfigs("configs/config") // получение конфиг структуры
 	db := dbconn.GetConnect()
 
-	for _, model := range []interface{}{&models.Orders{}, &models.Workers{}, &models.Clients{}, &models.Cities{}} {
+	for _, model := range []interface{}{&models.Orders{},
+		&models.Workers{},
+		&models.Clients{},
+		&models.Cities{},
+		&models.Sessions{}} {
 		err := db.DropTable(model, &orm.DropTableOptions{})
 
 		if err != nil {
