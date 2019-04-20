@@ -17,7 +17,11 @@ func CreateModels(c echo.Context) error {
 	configs.InitConfigs("configs/config") // получение конфиг структуры
 	db := dbconn.GetConnect()
 
-	for _, model := range []interface{}{&models.Cities{}, &models.Workers{}, &models.Clients{}, &models.Orders{}} {
+	for _, model := range []interface{}{&models.Cities{},
+		&models.Workers{},
+		&models.Clients{},
+		&models.Orders{},
+		&models.Sessions{}} {
 		err := db.CreateTable(model, &orm.CreateTableOptions{
 			FKConstraints: true,
 		})
