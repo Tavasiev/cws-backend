@@ -20,6 +20,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	defer dbconn.CloseDbConnection(dbconn.Conn)
 
 	e := echo.New()
 

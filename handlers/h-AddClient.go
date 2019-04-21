@@ -7,8 +7,7 @@ import (
 	"github.com/labstack/echo"
 
 	//local
-	"github.com/Tavasiev/cws-backend/configs"
-	"github.com/Tavasiev/cws-backend/dbconn"
+	db "github.com/Tavasiev/cws-backend/dbconn"
 	"github.com/Tavasiev/cws-backend/models"
 )
 
@@ -21,7 +20,6 @@ import (
 //	"city": "Vladikavkaz"
 //}
 func AddClient(c echo.Context) error {
-	configs.InitConfigs("configs/config") // получение конфиг структуры
 
 	var inputJSON models.Clients
 	err := c.Bind(&inputJSON)
@@ -29,9 +27,7 @@ func AddClient(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Wrong data")
 	}
 
-	db := dbconn.GetConnect()
-
-	err = db.Insert(&models.Clients{
+	err = db.Conn.Insert(&models.Clients{
 
 		Phone:      inputJSON.Phone,
 		Initials:   inputJSON.Initials,
