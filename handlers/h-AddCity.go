@@ -10,7 +10,6 @@ import (
 	"github.com/Tavasiev/cws-backend/models"
 )
 
-////
 // AddCity Добавляет город в таблицу Cities
 // формат входного json'а:
 // {

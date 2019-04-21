@@ -14,8 +14,14 @@ import (
 //CreateModels Создает все модели в бд.
 func CreateModels(c echo.Context) error {
 
-	for _, model := range []interface{}{&models.Cities{}, &models.Workers{}, &models.Clients{}, &models.Orders{}} {
-		err := db.Conn.CreateTable(model, &orm.CreateTableOptions{
+
+	for _, model := range []interface{}{&models.Cities{},
+		&models.Workers{},
+		&models.Clients{},
+		&models.Orders{},
+		&models.Sessions{}} {
+		err := db.CreateTable(model, &orm.CreateTableOptions{
+
 			FKConstraints: true,
 		})
 
