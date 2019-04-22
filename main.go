@@ -32,7 +32,7 @@ func main() {
 	jwtGroup := e.Group("/api/auth")
 	jwtGroup.POST("/newclient", h.AddClient)
 	jwtGroup.POST("/newworker", h.AddWorker)
-	//jwtGroup.POST("/login", h.Login)
+	jwtGroup.POST("/login", h.Login)
 	//jwtGroup.POST("/refresh", h.LoginRefresh)
 
 	// JWT middleware

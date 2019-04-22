@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/labstack/echo"
@@ -12,6 +11,7 @@ import (
 	"github.com/Tavasiev/cws-backend/models"
 )
 
+//
 // AddClient Добавляет инф о клиенте в таблицу Clients
 // формат входного json'а:
 //{
@@ -43,14 +43,14 @@ func AddClient(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusOK, err.Error())
 	}
 
-	token, err := models.CreateJwtToken()
+	/*token, err := models.CreateJwtToken()
 	if err != nil {
 		log.Println("Error creating Jwt token", err)
 		return c.String(http.StatusInternalServerError, "something went wrong")
-	}
+	}*/
 
 	return c.JSON(http.StatusOK, map[string]string{
 		"message": "You registered sucsesfully",
-		"token":   token,
+		"token":   "token",
 	})
 }
