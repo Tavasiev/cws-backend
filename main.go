@@ -34,6 +34,7 @@ func main() {
 	e.POST("/AddCity", handlers.AddCity)
 	e.POST("/AddWorker", handlers.AddWorker)
 	e.POST("/AddClient", handlers.AddClient)
+	e.POST("/CheckPhone", handlers.CheckPhone)
 
 	// Start server
 	e.Logger.Fatal(e.Start(configs.Cfg.Server.MainPort))
