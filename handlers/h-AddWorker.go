@@ -6,8 +6,7 @@ import (
 	"github.com/labstack/echo"
 
 	//local
-	"github.com/Tavasiev/cws-backend/configs"
-	"github.com/Tavasiev/cws-backend/dbconn"
+	db "github.com/Tavasiev/cws-backend/dbconn"
 	"github.com/Tavasiev/cws-backend/models"
 )
 
@@ -23,7 +22,6 @@ import (
 //  "wosh_title : "string"
 //}
 func AddWorker(c echo.Context) error {
-	configs.InitConfigs("configs/config") // получение конфиг структуры
 
 	var inputJSON models.Workers
 	err := c.Bind(&inputJSON)
@@ -31,9 +29,7 @@ func AddWorker(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Wrong data")
 	}
 
-	db := dbconn.GetConnect()
-
-	err = db.Insert(&models.Workers{
+	err = db.Conn.Insert(&models.Workers{
 
 		Phone:       inputJSON.Phone,
 		Password:    inputJSON.Password,
