@@ -8,6 +8,7 @@ import (
 	"github.com/Tavasiev/cws-backend/configs"
 	"github.com/Tavasiev/cws-backend/dbconn"
 	"github.com/Tavasiev/cws-backend/handlers"
+	h "github.com/Tavasiev/cws-backend/handlers"
 )
 
 func main() {
@@ -29,12 +30,26 @@ func main() {
 	e.Use(middleware.Recover())
 
 	// Routes
-	e.GET("/CreateModels", handlers.CreateModels)
-	e.GET("/DropModels", handlers.DropModels)
-	e.POST("/AddCity", handlers.AddCity)
-	e.POST("/AddWorker", handlers.AddWorker)
-	e.POST("/AddClient", handlers.AddClient)
+
+	jwtGroup := e.Group("/api/auth")
+	jwtGroup.POST("/newclient", h.AddClient)
+	jwtGroup.POST("/newworker", h.AddWorker)
+	//jwtGroup.POST("/login", h.Login)
+	//jwtGroup.POST("/refresh", h.LoginRefresh)
+
+	// JWT middleware
+	o := e.Group("/api")
+	o.Use(middleware.JWTWithConfig(middleware.JWTConfig{
+		SigningMethod: "HS512",
+		SigningKey:    []byte("mySecret"),
+	}))
+
+	e.GET("/CreateModels", h.CreateModels)
+	e.GET("/DropModels", h.DropModels)
+	e.POST("/AddCity", h.AddCity)
 	e.POST("/CheckPhone", handlers.CheckPhone)
+
+	o.GET("/main", h.TestJwt)
 
 	// Start server
 	e.Logger.Fatal(e.Start(configs.Cfg.Server.MainPort))

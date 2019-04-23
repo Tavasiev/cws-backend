@@ -14,7 +14,11 @@ import (
 //DropModels Удаляет все модели из бд.
 func DropModels(c echo.Context) error {
 
-	for _, model := range []interface{}{&models.Orders{}, &models.Workers{}, &models.Clients{}, &models.Cities{}} {
+	for _, model := range []interface{}{&models.Orders{},
+		&models.Workers{},
+		&models.Clients{},
+		&models.Cities{},
+		&models.Sessions{}} {
 		err := db.Conn.DropTable(model, &orm.DropTableOptions{})
 
 		if err != nil {
