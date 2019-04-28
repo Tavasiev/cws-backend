@@ -16,7 +16,9 @@ type inputPass struct {
 	User string
 }
 
+// Login Функция проверяет правильность логина и пароля, а так же выдаёт токен 
 func Login(c echo.Context) error {
+
 	var inputJSON inputPass
 	err := c.Bind(&inputJSON)
 	if err != nil {
@@ -32,7 +34,7 @@ func Login(c echo.Context) error {
 		}
 
 		if inputJSON.Password == Client.Password {
-			return echo.NewHTTPError(http.StatusOK, AuthenticateUser(Client))
+			return echo.NewHTTPError(http.StatusOK, Client.Password) // JWT.AuthenticateUser(Client))
 		}
 	} else if inputJSON.User == "Worker" {
 
@@ -42,7 +44,7 @@ func Login(c echo.Context) error {
 			return echo.NewHTTPError(http.StatusInternalServerError, err)
 		}
 		if inputJSON.Password == Worker.Password {
-			return echo.NewHTTPError(http.StatusOK, AuthenticateUser(Worker))
+			return echo.NewHTTPError(http.StatusOK, Worker.Password) //JWT.AuthenticateUser(Worker))
 		}
 	}
 }
