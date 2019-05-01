@@ -11,12 +11,18 @@ import (
 )
 
 type inputPass struct {
-	Password string
-	Phone int
-	User string
+	Password string `json:"pass"`
+	Phone int `json:"phone"`
+	User string `json:"user"`
 }
 
 // Login Функция проверяет правильность логина и пароля, а так же выдаёт токен 
+// формат входного json'а:
+//{
+//	"pass" : "qwerty1",
+//	"phone": 89888794747,
+//	"user": "Client"
+//}
 func Login(c echo.Context) error {
 
 	var inputJSON inputPass
@@ -28,7 +34,7 @@ func Login(c echo.Context) error {
 	if inputJSON.User == "Client" {
 
 		var Client models.Clients
-		err = db.Conn.Model(&Client).Where("phone = ?",inputJSON.Phone).Select()
+		_, err = db.Conn.Query(&Client,"SELECT * FROM clients WHERE phone = ?",inputJSON.Phone)
 		if err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, err)
 		}
@@ -39,7 +45,7 @@ func Login(c echo.Context) error {
 	} else if inputJSON.User == "Worker" {
 
 		var Worker models.Workers
-		err = db.Conn.Model(&Worker).Where("phone = ?",inputJSON.Phone).Select()
+		_, err = db.Conn.Query(&Worker,"SELECT * FROM clients WHERE phone = ?",inputJSON.Phone)
 		if err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, err)
 		}
@@ -47,4 +53,5 @@ func Login(c echo.Context) error {
 			return echo.NewHTTPError(http.StatusOK, Worker.Password) //JWT.AuthenticateUser(Worker))
 		}
 	}
+	return echo.NewHTTPError(http.StatusOK, "Wrong password")
 }
