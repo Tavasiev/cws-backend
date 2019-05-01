@@ -15,6 +15,9 @@ type inputPhone struct {
 	User string
 }
 
+ // CheckPhone Функция проверяет есть ли такой телефон в базе данных:
+ // если нет нужно зарегестрироваться, 
+ // а если есть нужно ввести пароль чтобы войти в свой аккаунт.
 func CheckPhone(c echo.Context) error {
 
 	var inputJSON inputPhone
