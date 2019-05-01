@@ -45,7 +45,7 @@ func Login(c echo.Context) error {
 	} else if inputJSON.User == "Worker" {
 
 		var Worker models.Workers
-		_, err = db.Conn.Query(&Worker,"SELECT * FROM clients WHERE phone = ?",inputJSON.Phone)
+		_, err = db.Conn.Query(&Worker,"SELECT * FROM workers WHERE phone = ?",inputJSON.Phone)
 		if err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, err)
 		}
