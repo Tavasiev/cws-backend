@@ -20,7 +20,6 @@ func CreateModels(c echo.Context) error {
 		&models.Orders{},
 		&models.Sessions{}} {
 		err := db.Conn.CreateTable(model, &orm.CreateTableOptions{
-
 			FKConstraints: true,
 		})
 
