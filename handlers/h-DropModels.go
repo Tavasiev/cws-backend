@@ -20,7 +20,6 @@ func DropModels(c echo.Context) error {
 		&models.Cities{},
 		&models.Sessions{}} {
 		err := db.Conn.DropTable(model, &orm.DropTableOptions{})
-
 		if err != nil {
 			return echo.NewHTTPError(http.StatusOK, err.Error())
 			//panic(err)
