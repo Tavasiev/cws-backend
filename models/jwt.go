@@ -1,18 +1,17 @@
 package models
 
 import (
-	"log"
+	"errors"
 	"time"
 
-	"github.com/Tavasiev/cws-backend/dbconn"
-
+	db "github.com/Tavasiev/cws-backend/dbconn"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/gofrs/uuid"
 )
-
-var db = dbconn.GetConnect()
 
 const tokenExpiredTime = 1 // 1 - примерно 10-20 секунд, после токен просрочен
 //const tokenExpiredTime = 1440
+const refreshTokenExpiredMinutes = 201600
 
 // Sessions godoc
 type Sessions struct {
@@ -55,54 +54,39 @@ type (
 	}
 )
 
-func AuthenticateUser(data LoginRequest) (LoginResponse, error) {
+func (logResp *LoginResponse) newRefreshToken(userID int) error {
 
-	var oper Clients
-
-	var login LoginResponse
-	err := db.Insert(&oper)
-
+	newToken, err := uuid.NewV4()
 	if err != nil {
-		//return login, err
-		panic(err)
+		return err
 	}
-	log.Println("---------------------------------------------")
-	log.Panicln(oper.Password)
-	log.Println("---------------------------------------------")
 
-	// Comparing the password with the hash
-	/*err = bcrypt.CompareHashAndPassword([]byte(oper.Password), []byte(data.Password))
+	logResp.UserID = userID
+	logResp.RefreshToken = newToken.String()
+
+	dur := time.Minute * time.Duration(refreshTokenExpiredMinutes)
+	logResp.RefreshTokenExpiration = time.Now().Add(dur)
+
+	err = logResp.saveTokenData(newToken.String())
 	if err != nil {
-		return login, err
-	}*/
-
-	return login, nil
+		return err
+	}
+	return nil
 }
 
-/*
-type JwtClaims struct {
-	UserID int    `json:"user_id"`
-	Phone  string `json:"phone"`
-	jwt.StandardClaims
-}
+// saveTokenData expired existing and create new token for user
+func (logResp *LoginResponse) saveTokenData(uuid string) error {
 
-func CreateJwtToken() (string, error) {
-	claims := JwtClaims{
-		2,
-		"79888794725",
-		jwt.StandardClaims{},
-	}
+	var sessNew Sessions
 
-	claims.IssuedAt = time.Now().Unix()
-	dur := time.Minute * time.Duration(tokenExpiredTime)
-	claims.ExpiresAt = time.Now().Add(dur).Unix()
+	sessNew.UserID = logResp.UserID
+	sessNew.RefreshToken = uuid
+	sessNew.RefreshTokenExpired = logResp.RefreshTokenExpiration
 
-	rawToken := jwt.NewWithClaims(jwt.SigningMethodHS512, claims)
-
-	token, err := rawToken.SignedString([]byte("mySecret"))
-
+	_, err := db.Conn.Model(&sessNew).Returning("*").Insert()
 	if err != nil {
-		return "", err
+		return errors.New("Ошибка сохранения новой сессии")
 	}
-	return token, nil
-}*/
+
+	return nil
+}

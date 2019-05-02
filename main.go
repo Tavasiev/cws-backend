@@ -7,6 +7,7 @@ import (
 	//local
 	"github.com/Tavasiev/cws-backend/configs"
 	"github.com/Tavasiev/cws-backend/dbconn"
+	"github.com/Tavasiev/cws-backend/handlers"
 	h "github.com/Tavasiev/cws-backend/handlers"
 )
 
@@ -20,6 +21,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	defer dbconn.CloseDbConnection(dbconn.Conn)
 
 	e := echo.New()
 
@@ -45,6 +47,8 @@ func main() {
 	e.GET("/CreateModels", h.CreateModels)
 	e.GET("/DropModels", h.DropModels)
 	e.POST("/AddCity", h.AddCity)
+	e.POST("/CheckPhone", handlers.CheckPhone)
+	e.POST("/Login", handlers.Login)
 
 	o.GET("/main", h.TestJwt)
 

@@ -1,8 +1,6 @@
 package configs
 
 import (
-	"log"
-
 	"github.com/spf13/viper"
 )
 
@@ -24,7 +22,7 @@ type MainConfigs struct {
 var Cfg MainConfigs
 
 //InitConfigs Initializes the main programm settings
-func InitConfigs(name string) {
+func InitConfigs(name string) error {
 	initDefaults()
 	viper.SetConfigName(name)
 	viper.AddConfigPath("/configs/")
@@ -32,13 +30,14 @@ func InitConfigs(name string) {
 
 	err := viper.ReadInConfig()
 	if err != nil {
-		log.Printf("Read configuration error. %s", err)
+		return err
 	}
 
 	err = viper.Unmarshal(&Cfg)
 	if err != nil {
-		log.Printf("Unmarshaling configuration error. %s", err)
+		return err
 	}
+	return nil
 }
 
 //initDefaults Initializes default values

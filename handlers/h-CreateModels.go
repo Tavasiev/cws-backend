@@ -7,22 +7,19 @@ import (
 	"github.com/labstack/echo"
 
 	//local
-	"github.com/Tavasiev/cws-backend/configs"
-	"github.com/Tavasiev/cws-backend/dbconn"
+	db "github.com/Tavasiev/cws-backend/dbconn"
 	"github.com/Tavasiev/cws-backend/models"
 )
 
 //CreateModels Создает все модели в бд.
 func CreateModels(c echo.Context) error {
-	configs.InitConfigs("configs/config") // получение конфиг структуры
-	db := dbconn.GetConnect()
 
 	for _, model := range []interface{}{&models.Cities{},
 		&models.Workers{},
 		&models.Clients{},
 		&models.Orders{},
 		&models.Sessions{}} {
-		err := db.CreateTable(model, &orm.CreateTableOptions{
+		err := db.Conn.CreateTable(model, &orm.CreateTableOptions{
 			FKConstraints: true,
 		})
 
