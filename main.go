@@ -34,13 +34,13 @@ func main() {
 	jwtGroup := e.Group("/api/auth")
 	jwtGroup.POST("/newclient", h.AddClient)
 	jwtGroup.POST("/newworker", h.AddWorker)
-	//jwtGroup.POST("/login", h.Login)
-	//jwtGroup.POST("/refresh", h.LoginRefresh)
+	jwtGroup.POST("/login", h.Login)
+	jwtGroup.POST("/refresh", h.LoginRefresh)
 
 	// JWT middleware
 	o := e.Group("/api")
 	o.Use(middleware.JWTWithConfig(middleware.JWTConfig{
-		SigningMethod: "HS512",
+		SigningMethod: "HS256",
 		SigningKey:    []byte("mySecret"),
 	}))
 

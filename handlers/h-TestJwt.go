@@ -6,6 +6,8 @@ import (
 	"github.com/labstack/echo"
 )
 
+//TestJwt godoc
 func TestJwt(c echo.Context) error {
-	return c.String(http.StatusOK, "you are here")
+
+	return c.String(http.StatusOK, "you're here")
 }
