@@ -40,7 +40,7 @@ func main() {
 	// JWT middleware
 	o := e.Group("/api")
 	o.Use(middleware.JWTWithConfig(middleware.JWTConfig{
-		SigningMethod: "HS512",
+		SigningMethod: "HS256",
 		SigningKey:    []byte("mySecret"),
 	}))
 

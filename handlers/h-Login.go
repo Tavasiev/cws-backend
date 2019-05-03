@@ -26,6 +26,7 @@ type inputPass struct {
 //}
 func Login(c echo.Context) error {
 
+	var login models.LoginResponse
 	var inputJSON inputPass
 
 	err := c.Bind(&inputJSON)
@@ -42,7 +43,23 @@ func Login(c echo.Context) error {
 		}
 
 		if inputJSON.Password == Client.Password {
-			return echo.NewHTTPError(http.StatusOK, Client.Password) // JWT.AuthenticateUser(Client))
+
+			err = models.ExpireUserTokens(Client.ID)
+			if err != nil {
+				return err
+			}
+
+			err = login.NewRefreshToken(Client.ID)
+			if err != nil {
+				return err
+			}
+
+			err = login.GenerateJWT(Client)
+			if err != nil {
+				return err
+			}
+
+			return echo.NewHTTPError(http.StatusOK, login) // JWT.AuthenticateUser(Client))
 		}
 	} else if inputJSON.User == "Worker" {
 
@@ -55,5 +72,5 @@ func Login(c echo.Context) error {
 			return echo.NewHTTPError(http.StatusOK, Worker.Password) //JWT.AuthenticateUser(Worker))
 		}
 	}
-	return echo.NewHTTPError(http.StatusOK, "Wrong password")
+	return echo.NewHTTPError(http.StatusOK, login)
 }

@@ -9,9 +9,10 @@ import (
 	"github.com/gofrs/uuid"
 )
 
-const tokenExpiredTime = 1 // 1 - примерно 10-20 секунд, после токен просрочен
+const tokenExpiredTime = 10 // 1 - примерно 10-20 секунд, после токен просрочен
 //const tokenExpiredTime = 1440
 const refreshTokenExpiredMinutes = 201600
+const configjwtSec = "Mysecret"
 
 // Sessions godoc
 type Sessions struct {
@@ -39,9 +40,9 @@ type (
 
 	// TokenClaim JWT token structure
 	TokenClaim struct {
-		Role   string `json:"role"`
-		UserID int    `json:"user_id"`
-		Phone  int    `json:"login"`
+		//Role   string `json:"role"`
+		UserID int `json:"user_id"`
+		Phone  int `json:"login"`
 		jwt.StandardClaims
 	}
 
@@ -54,7 +55,7 @@ type (
 	}
 )
 
-func (logResp *LoginResponse) newRefreshToken(userID int) error {
+func (logResp *LoginResponse) NewRefreshToken(userID int) error {
 
 	newToken, err := uuid.NewV4()
 	if err != nil {
@@ -89,4 +90,91 @@ func (logResp *LoginResponse) saveTokenData(uuid string) error {
 	}
 
 	return nil
+}
+
+func (logResp *LoginResponse) GenerateJWT(user Clients) error {
+
+	jwtSec := configjwtSec
+	mySigningKey := []byte(jwtSec)
+
+	claims := TokenClaim{
+		UserID: user.ID,
+		//Role:   user.Role,
+		Phone: user.Phone,
+	}
+	claims.IssuedAt = time.Now().Unix()
+
+	dur := time.Minute * time.Duration(tokenExpiredTime)
+	claims.ExpiresAt = time.Now().Add(dur).Unix()
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	ss, err := token.SignedString(mySigningKey)
+	if err != nil {
+		return err
+	}
+	logResp.Token = ss
+
+	return nil
+}
+
+func ExpireUserTokens(userID int) error {
+
+	var sessOld Sessions
+
+	_, err := db.Conn.Model(&sessOld).
+		Set("refresh_token_used = ?", time.Now()).
+		Where("user_id = ?", userID).
+		Update()
+
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func RefreshJWTToken(token string) (LoginResponse, error) {
+
+	var newLogin LoginResponse
+
+	User, err := expireToken(token)
+	if err != nil {
+		return newLogin, err
+	}
+
+	err = newLogin.NewRefreshToken(User.ID)
+	if err != nil {
+		return newLogin, err
+	}
+
+	err = newLogin.GenerateJWT(User)
+	if err != nil {
+		return newLogin, err
+	}
+
+	return newLogin, nil
+}
+
+func expireToken(token string) (Clients, error) {
+
+	var oper Clients
+	var sessOld Sessions
+
+	_, err := db.Conn.Model(&sessOld).
+		Set("refresh_token_used = ?", time.Now()).
+		Where("refresh_token = ? AND CURRENT_TIMESTAMP < refresh_token_expired AND refresh_token_used is NULL", token).
+		Returning("*").
+		Update(&sessOld)
+
+	if err != nil {
+		return oper, errors.New("Refresh token not found")
+	}
+
+	err = db.Conn.Model(&oper).
+		Where("ID = ?", sessOld.UserID).
+		First()
+	if err != nil {
+		return oper, err
+	}
+	return oper, nil
 }
