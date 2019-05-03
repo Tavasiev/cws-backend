@@ -9,10 +9,10 @@ import (
 	"github.com/gofrs/uuid"
 )
 
-const tokenExpiredTime = 10 // 1 - примерно 10-20 секунд, после токен просрочен
+const tokenExpiredTime = 100 // 1 - примерно 10-20 секунд, после токен просрочен
 //const tokenExpiredTime = 1440
 const refreshTokenExpiredMinutes = 201600
-const configjwtSec = "Mysecret"
+const configjwtSec = "mySecret"
 
 // Sessions godoc
 type Sessions struct {
@@ -158,6 +158,78 @@ func RefreshJWTToken(token string) (LoginResponse, error) {
 func expireToken(token string) (Clients, error) {
 
 	var oper Clients
+	var sessOld Sessions
+
+	_, err := db.Conn.Model(&sessOld).
+		Set("refresh_token_used = ?", time.Now()).
+		Where("refresh_token = ? AND CURRENT_TIMESTAMP < refresh_token_expired AND refresh_token_used is NULL", token).
+		Returning("*").
+		Update(&sessOld)
+
+	if err != nil {
+		return oper, errors.New("Refresh token not found")
+	}
+
+	err = db.Conn.Model(&oper).
+		Where("ID = ?", sessOld.UserUUID).
+		First()
+	if err != nil {
+		return oper, err
+	}
+	return oper, nil
+}
+
+func (logResp *LoginResponse) GenerateJWTWorker(user Workers) error {
+
+	jwtSec := configjwtSec
+	mySigningKey := []byte(jwtSec)
+
+	claims := TokenClaim{
+		UserID: user.ID,
+		//Role:   user.Role,
+		Phone: user.Phone,
+	}
+	claims.IssuedAt = time.Now().Unix()
+
+	dur := time.Minute * time.Duration(tokenExpiredTime)
+	claims.ExpiresAt = time.Now().Add(dur).Unix()
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	ss, err := token.SignedString(mySigningKey)
+	if err != nil {
+		return err
+	}
+	logResp.Token = ss
+
+	return nil
+}
+
+func RefreshJWTTokenWorker(token string) (LoginResponse, error) {
+
+	var newLogin LoginResponse
+
+	User, err := expireTokenWorker(token)
+	if err != nil {
+		return newLogin, err
+	}
+
+	err = newLogin.NewRefreshToken(User.UUID)
+	if err != nil {
+		return newLogin, err
+	}
+
+	err = newLogin.GenerateJWTWorker(User)
+	if err != nil {
+		return newLogin, err
+	}
+
+	return newLogin, nil
+}
+
+func expireTokenWorker(token string) (Workers, error) {
+
+	var oper Workers
 	var sessOld Sessions
 
 	_, err := db.Conn.Model(&sessOld).

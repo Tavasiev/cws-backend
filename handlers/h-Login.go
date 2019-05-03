@@ -59,9 +59,11 @@ func Login(c echo.Context) error {
 				return err
 			}
 
-			return echo.NewHTTPError(http.StatusOK, login) // JWT.AuthenticateUser(Client))
+			return echo.NewHTTPError(http.StatusOK, login)
 		}
-	} else if inputJSON.User == "Worker" {
+	}
+
+	if inputJSON.User == "Worker" {
 
 		var Worker models.Workers
 		_, err = db.Conn.Query(&Worker, "SELECT * FROM workers WHERE phone = ?", inputJSON.Phone)
@@ -69,7 +71,23 @@ func Login(c echo.Context) error {
 			return echo.NewHTTPError(http.StatusInternalServerError, err)
 		}
 		if inputJSON.Password == Worker.Password {
-			return echo.NewHTTPError(http.StatusOK, Worker.Password) //JWT.AuthenticateUser(Worker))
+
+			err = models.ExpireUserTokens(Worker.UUID)
+			if err != nil {
+				return err
+			}
+
+			err = login.NewRefreshToken(Worker.UUID)
+			if err != nil {
+				return err
+			}
+
+			err = login.GenerateJWTWorker(Worker)
+			if err != nil {
+				return err
+			}
+
+			return echo.NewHTTPError(http.StatusOK, login)
 		}
 	}
 	return echo.NewHTTPError(http.StatusOK, login)
