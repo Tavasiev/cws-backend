@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/gofrs/uuid"
 	"github.com/labstack/echo"
 
 	//local
@@ -22,31 +23,42 @@ import (
 func AddClient(c echo.Context) error {
 
 	var inputJSON models.Clients
+	var login models.LoginResponse
 	err := c.Bind(&inputJSON)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Wrong data")
 	}
 
-	err = db.Conn.Insert(&models.Clients{
+	uuid, err := uuid.NewV4()
+	if err != nil {
+		return err
+	}
 
+	err = db.Conn.Insert(&models.Clients{
+		UUID:       uuid.String(),
 		Phone:      inputJSON.Phone,
 		Initials:   inputJSON.Initials,
 		CitiesCity: inputJSON.CitiesCity,
 		Password:   inputJSON.Password,
 	})
-
 	if err != nil {
 		return echo.NewHTTPError(http.StatusOK, err.Error())
 	}
 
-	/*token, err := models.CreateJwtToken()
+	err = models.ExpireUserTokens(uuid.String())
 	if err != nil {
-		log.Println("Error creating Jwt token", err)
-		return c.String(http.StatusInternalServerError, "something went wrong")
-	}*/
+		return err
+	}
 
-	return c.JSON(http.StatusOK, map[string]string{
-		"message": "You registered sucsesfully",
-		"token":   "token",
-	})
+	err = login.NewRefreshToken(uuid.String())
+	if err != nil {
+		return err
+	}
+
+	err = login.GenerateJWT(inputJSON)
+	if err != nil {
+		return err
+	}
+
+	return echo.NewHTTPError(http.StatusOK, login)
 }

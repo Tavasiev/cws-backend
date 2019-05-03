@@ -44,12 +44,12 @@ func Login(c echo.Context) error {
 
 		if inputJSON.Password == Client.Password {
 
-			err = models.ExpireUserTokens(Client.ID)
+			err = models.ExpireUserTokens(Client.UUID)
 			if err != nil {
 				return err
 			}
 
-			err = login.NewRefreshToken(Client.ID)
+			err = login.NewRefreshToken(Client.UUID)
 			if err != nil {
 				return err
 			}

@@ -18,7 +18,7 @@ const configjwtSec = "Mysecret"
 type Sessions struct {
 	tableName           struct{}  `sql:"cws_sessions"`
 	ID                  int       `json:"id" sql:",pk"`
-	UserID              int       `json:"user_id"`
+	UserUUID            string    `json:"user_uuid"`
 	RefreshToken        string    `json:"refresh_token" description:"Токен для обновления"`
 	SessionEnd          time.Time `json:"session_end" description:"Дата когда токен отозван"`
 	RefreshTokenUsed    time.Time `json:"refresh_token_used" description:"Дата использования токена"`
@@ -48,21 +48,21 @@ type (
 
 	// LoginResponse responsed when requesting token
 	LoginResponse struct {
-		UserID                 int       `json:"user_id"`
+		UserUUID               string    `json:"user_uuid"`
 		Token                  string    `json:"token"`
 		RefreshToken           string    `json:"refresh_token"`
 		RefreshTokenExpiration time.Time `json:"refresh_expiration"`
 	}
 )
 
-func (logResp *LoginResponse) NewRefreshToken(userID int) error {
+func (logResp *LoginResponse) NewRefreshToken(userID string) error {
 
 	newToken, err := uuid.NewV4()
 	if err != nil {
 		return err
 	}
 
-	logResp.UserID = userID
+	logResp.UserUUID = userID
 	logResp.RefreshToken = newToken.String()
 
 	dur := time.Minute * time.Duration(refreshTokenExpiredMinutes)
@@ -80,7 +80,7 @@ func (logResp *LoginResponse) saveTokenData(uuid string) error {
 
 	var sessNew Sessions
 
-	sessNew.UserID = logResp.UserID
+	sessNew.UserUUID = logResp.UserUUID
 	sessNew.RefreshToken = uuid
 	sessNew.RefreshTokenExpired = logResp.RefreshTokenExpiration
 
@@ -118,13 +118,13 @@ func (logResp *LoginResponse) GenerateJWT(user Clients) error {
 	return nil
 }
 
-func ExpireUserTokens(userID int) error {
+func ExpireUserTokens(userUUID string) error {
 
 	var sessOld Sessions
 
 	_, err := db.Conn.Model(&sessOld).
 		Set("refresh_token_used = ?", time.Now()).
-		Where("user_id = ?", userID).
+		Where("user_uuid = ?", userUUID).
 		Update()
 
 	if err != nil {
@@ -142,7 +142,7 @@ func RefreshJWTToken(token string) (LoginResponse, error) {
 		return newLogin, err
 	}
 
-	err = newLogin.NewRefreshToken(User.ID)
+	err = newLogin.NewRefreshToken(User.UUID)
 	if err != nil {
 		return newLogin, err
 	}
@@ -171,7 +171,7 @@ func expireToken(token string) (Clients, error) {
 	}
 
 	err = db.Conn.Model(&oper).
-		Where("ID = ?", sessOld.UserID).
+		Where("ID = ?", sessOld.UserUUID).
 		First()
 	if err != nil {
 		return oper, err

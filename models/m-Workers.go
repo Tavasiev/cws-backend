@@ -3,6 +3,7 @@ package models
 //Workers Таблица работников автомоек
 type Workers struct {
 	ID          int    `sql:",pk"`
+	UUID        string `sql:", unique" json:"uuid"`
 	Phone       int    `sql:",unique" json:"phone"`
 	Password    string `sql:",notnull" json:"pass"`
 	Initials    string `sql:",notnull" json:"initials"`
